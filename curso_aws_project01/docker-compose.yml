@@ -1,0 +1,13 @@
+version: '3.7'
+services:
+  db:
+    image: mysql:8.0.31
+    container_name: banco_mysql
+    volumes:
+      - ./:/home
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_DATABASE: 'rodrigo'
+      MYSQL_PASSWORD: '123456'
+      MYSQL_ROOT_PASSWORD: '123456'
