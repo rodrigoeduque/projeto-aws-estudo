@@ -20,6 +20,9 @@ public class Product {
     @Column(length = 12, nullable = false)
     private String code;
 
+
+    @Column(length = 20, nullable = false)
+    private String color;
     private Double price;
 
     public Long getId() {
@@ -52,6 +55,14 @@ public class Product {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 
     public Double getPrice() {
