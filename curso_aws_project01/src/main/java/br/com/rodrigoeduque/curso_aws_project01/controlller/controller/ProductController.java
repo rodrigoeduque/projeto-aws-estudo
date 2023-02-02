@@ -1,7 +1,9 @@
 package br.com.rodrigoeduque.curso_aws_project01.controlller.controller;
 
 import br.com.rodrigoeduque.curso_aws_project01.model.Product;
+import br.com.rodrigoeduque.curso_aws_project01.model.enums.EventType;
 import br.com.rodrigoeduque.curso_aws_project01.repository.ProductRepository;
+import br.com.rodrigoeduque.curso_aws_project01.service.ProductPublisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,9 @@ public class ProductController {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private ProductPublisher publisher;
 
     @GetMapping
     public ResponseEntity<?> findAllProducts() {
@@ -42,6 +47,8 @@ public class ProductController {
 
         URI uri = UriComponentsBuilder.fromPath("api/products/{id}").buildAndExpand(newProduct.getId()).toUri();
 
+        publisher.publishProductEvent(newProduct, EventType.PRODUCT_CREATED,"Bento Mendonça _ Cria");
+
         return ResponseEntity.created(uri).body(newProduct);
     }
 
@@ -51,6 +58,7 @@ public class ProductController {
             product.setId(id);
 
             Product updateProduct = productRepository.save(product);
+            publisher.publishProductEvent(updateProduct, EventType.PRODUCT_UPDATED,"Bento Mendonça _ Atualiza");
             return ResponseEntity.ok(updateProduct);
         }
         return ResponseEntity.notFound().build();
@@ -60,6 +68,7 @@ public class ProductController {
     public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
         Product product = productRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404)));
         productRepository.deleteById(id);
+        publisher.publishProductEvent(product, EventType.PRODUCT_DELETED,"Bento Mendonça _ Deleta");
         return ResponseEntity.noContent().build();
     }
 
